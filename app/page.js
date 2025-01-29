@@ -1,12 +1,8 @@
-'use client'
-import { BrowserRouter, Routes , Route } from "react-router-dom";
-import Navbar from "./components/navbar";
-import SideBar from "./components/sidebar";
+import React from "react";
+import HomePage from './components/homepage'
 
-export default function Home() {
-  return (
-    <main>
-      <Navbar/>
-    </main>
-  );
+export default function Page() {
+  return(
+    <HomePage classname='z-10'/>
+  )
 }

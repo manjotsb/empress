@@ -1,64 +1,81 @@
-'use client'
-import React, {use, useState} from "react";
-import Image from "next/image";
-import UserDropdown from "./userdropdown";
-import CartDropdown from "./cartdropdown";
-import { IoMdMore } from "react-icons/io";
-import { IoIosClose } from "react-icons/io";
-import SideBar from "./sidebar";
-import EmpressLogo from '../src/empress_logo.png'
+'use client';
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import UserDropdown from './userdropdown';
+import CartDropdown from './cartdropdown';
+import EmpressLogo from '../src/empress_logo.png';
+import SearchDropdown from './searchdropdown';
+import WishlistDropdown from './wishlistdropdown';
+import { IoCallOutline } from 'react-icons/io5';
 
-import { LifeBuoy,
-    Receipt,
-    Boxes,
-    Package,
-    UserCircle,
-    BarChart3,
-    LayoutDashboard,
-    Settings,
- } from "lucide-react";
+export default function Navbar() {
+  const router1 = useRouter();
+  const [scrolledIntro, setScrolledIntro] = useState(false);
 
-export default function Navbar(){
-    const [click, setClick] = useState(false);
-    const [sideBar, setSideBar] = useState(false);
+  const navigateTo = (path: string) => {
+    router1.push(path);
+  };
 
-    const handleSideBar = () => {
-        setSideBar(!sideBar)
+  const handleScroll = () => {
+    const introHeight = document.getElementById('introduction').offsetHeight;
+
+    if (window.scrollY > introHeight) {
+      setScrolledIntro(true);
     }
-
-    const handleClick = () => {
-        setClick(!click)
-        handleSideBar()
+    else {
+      setScrolledIntro(false);
     }
+  };
 
-    const closeSideBar = () => {
-        setSideBar(false);
-        setClick(false)
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
     }
+  },[])
 
-    return(
-        <main className="p-4 relative">
+  return (
+    <div className={`py-2 transition-colors duration-300 ${scrolledIntro ? 'bg-blue-900 text-white' : 'bg-white text-black'}`}>
+      <nav className="flex justify-between items-center px-4 h-[60px]">
+        {/* Contact Us */}
+        <div
+          className="flex items-center cursor-pointer hover:bg-gray-200 py-2 rounded-full"
+          onClick={() => navigateTo('/pages/contact')} // Navigate to the contact page
+        >
+          <IoCallOutline size={22} className='mx-2' />
+        </div>
 
-            {sideBar && 
-            <SideBar closeSidebar={closeSideBar}/>}
-            
-            <nav className="flex justify-between items-center px-8">
+        {/* Empress Logo */}
+        <div
+          className="absolute left-1/2 transform -translate-x-1/2 cursor-pointer"
+          onClick={() => navigateTo('/')}
+        >
+          <Image src={EmpressLogo} width={80} height={80} alt="Empress Logo" />
+        </div>
 
-                <div className="flex shrink-0">
-                    <Image src={EmpressLogo} width={150} height={150} alt="Empress Logo"/>
-                </div>
-
-                <div className="flex justify-center items-center space-x-10 text-4xl">
-                    <UserDropdown/>
-
-                    <CartDropdown/>
-
-                    <div onClick={handleClick} className=' cursor-pointer'>
-                        {click ? <IoIosClose/> : <IoMdMore/>}
-                    </div>
-                </div>
-            </nav>
-
-        </main>
-    )
+        {/* Icons Section */}
+        <div className="flex items-center text-xl space-x-10 mx-2">
+          <SearchDropdown />
+          <div
+            className="cursor-pointer"
+            onClick={() => navigateTo('/pages/wishlist')}
+          >
+            <WishlistDropdown />
+          </div>
+          <div
+            className="cursor-pointer"
+            onClick={() => navigateTo('/pages/accounts')}
+          >
+            <UserDropdown />
+          </div>
+          <div
+            className="cursor-pointer"
+          >
+            <CartDropdown />
+          </div>
+        </div>
+      </nav>
+    </div>
+  );
 }
